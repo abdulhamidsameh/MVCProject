@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using MVCProject.BLL.Interfaces;
+using MVCProject.DAL.Models;
 namespace MVCProject.PL.Controllers
 {
     public class DepartmentController : Controller
@@ -14,6 +15,23 @@ namespace MVCProject.PL.Controllers
         {
             var departments = _departmentRepo.GetAll();
             return View(departments);
+        }
+        [HttpGet]
+        public IActionResult Create()
+        {
+            return View();
+        }
+        [HttpPost]
+        public IActionResult Create(Department department)
+        {
+            if(ModelState.IsValid)
+            {
+                var Count = _departmentRepo.Add(department);
+                if (Count > 0)
+                    return RedirectToAction(nameof(Index));
+
+            }
+            return View(department);
         }
     }
 }
