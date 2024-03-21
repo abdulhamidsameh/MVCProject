@@ -28,7 +28,7 @@ namespace MVCProject.PL
             services.AddControllersWithViews();
             services.AddDbContext<MVCProjectDbContext>(options =>
             {
-                options.UseSqlServer("Server = .;Database=MVCProject;Trusted_Connection=True");
+                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"));
             });
         }
 
