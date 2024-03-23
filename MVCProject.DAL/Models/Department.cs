@@ -14,6 +14,7 @@ namespace MVCProject.DAL.Models
         public string Code { get; set; }
         [Required]
         public string Name { get; set; }
+        [Display(Name="Date Of Creation")]
         public DateTime DateOfCreation { get; set; }
     }
 }
