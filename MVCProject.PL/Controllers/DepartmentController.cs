@@ -78,5 +78,28 @@ namespace MVCProject.PL.Controllers
                 return View(department);
             } 
         }
+        [HttpGet]
+        public IActionResult Delete(int? id)
+        {
+            return Details(id, "Delete");
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Delete(Department department)
+        {
+            try
+            {
+                _departmentRepo.Delete(department);
+                return RedirectToAction(nameof(Index));
+            }
+            catch (Exception ex)
+            {
+                if (_env.IsDevelopment())
+                    ModelState.AddModelError(string.Empty, ex.Message);
+                else
+                    ModelState.AddModelError(string.Empty, "An Error Has Occured during Deleting the Department");
+                return View(department);
+            }
+        }
     }
 }
