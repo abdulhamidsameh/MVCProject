@@ -10,7 +10,9 @@ namespace MVCProject.DAL.Models
     public class Department
     {
         public int Id { get; set; }
+        [Required]
         public string Code { get; set; }
+        [Required]
         public string Name { get; set; }
         public DateTime DateOfCreation { get; set; }
     }
