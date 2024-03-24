@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Hosting;
+using MVCProject.BLL.Interfaces;
 using MVCProject.BLL.Repositories;
 using MVCProject.DAL.Models;
 using System;
@@ -9,10 +10,10 @@ namespace MVCProject.PL.Controllers
 {
     public class EmployeeController : Controller
     {
-        private readonly EmployeeRepository _employeeRepo;
+        private readonly IEmployeeRepository _employeeRepo;
         private readonly IWebHostEnvironment _env;
 
-        public EmployeeController(EmployeeRepository employeeRepo, IWebHostEnvironment env)
+        public EmployeeController(IEmployeeRepository employeeRepo, IWebHostEnvironment env)
         {
             _employeeRepo = employeeRepo;
             _env = env;
@@ -42,7 +43,7 @@ namespace MVCProject.PL.Controllers
             return View(employee);
         }
         [HttpGet]
-        public IActionResult Deteils(int? id,string ViewName ="Details") 
+        public IActionResult Details(int? id,string ViewName ="Details") 
         {
             if (!id.HasValue)
                 return BadRequest();
@@ -54,7 +55,7 @@ namespace MVCProject.PL.Controllers
         [HttpGet]
         public IActionResult Edit(int? id)
         {
-            return Deteils(id,"Edit");
+            return Details(id,"Edit");
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -81,7 +82,7 @@ namespace MVCProject.PL.Controllers
         [HttpGet]
         public IActionResult Delete(int? id) 
         {
-            return Deteils(id,"Delete");
+            return Details(id,"Delete");
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
