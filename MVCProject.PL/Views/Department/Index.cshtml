@@ -10,8 +10,11 @@
 
 <a asp-controller="Department" asp-action="Create" class="btn btn-primary">Create New Department</a>
 
-<br />
+<div class="alert alert-info">
+	@ViewBag.Message
+</div>
 
+<br />
 @{
 	if (Model.Count() > 0)
 	{

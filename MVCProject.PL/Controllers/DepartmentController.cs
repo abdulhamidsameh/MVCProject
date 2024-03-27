@@ -30,39 +30,42 @@ namespace MVCProject.PL.Controllers
         [HttpPost]
         public IActionResult Create(Department department)
         {
-            if(ModelState.IsValid)
+            if (ModelState.IsValid)
             {
                 var Count = _departmentRepo.Add(department);
                 if (Count > 0)
-                    return RedirectToAction(nameof(Index));
-
+                {
+                    //ViewBag.Message = "Department Is Created Successfully";
+					return RedirectToAction(nameof(Index));
+				}
+                    
             }
             return View(department);
         }
         // /Department/Details/id
         //[HttpGet]
-        public IActionResult Details(int? id,string ViewName="Details") 
+        public IActionResult Details(int? id, string ViewName = "Details")
         {
-            if(!id.HasValue)
+            if (!id.HasValue)
                 return BadRequest();
             var department = _departmentRepo.Get(id.Value);
-            if(department is null)
+            if (department is null)
                 return NotFound();
-            return View(ViewName,department);
+            return View(ViewName, department);
         }
         // /Department/Edit/10
         //[HttpGet]
         public IActionResult Edit(int? id)
         {
-            return Details(id,"Edit");
+            return Details(id, "Edit");
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Edit([FromRoute] int id,Department department)
+        public IActionResult Edit([FromRoute] int id, Department department)
         {
-            if(id != department.Id)
+            if (id != department.Id)
                 return BadRequest();
-            if(!ModelState.IsValid)
+            if (!ModelState.IsValid)
                 return View(department);
             try
             {
@@ -71,12 +74,12 @@ namespace MVCProject.PL.Controllers
             }
             catch (Exception ex)
             {
-                if(_env.IsDevelopment())
+                if (_env.IsDevelopment())
                     ModelState.AddModelError(string.Empty, ex.Message);
                 else
                     ModelState.AddModelError(string.Empty, "An Error Has Occured during Updating the Department");
                 return View(department);
-            } 
+            }
         }
         [HttpGet]
         public IActionResult Delete(int? id)
