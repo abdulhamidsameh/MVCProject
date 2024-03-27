@@ -8,11 +8,9 @@
 <br />
 <br />
 
-<a asp-controller="Department" asp-action="Create" class="btn btn-primary">Create New Department</a>
+<partial name="_CreatPartial"></partial>
 
-<div class="alert alert-info">
-	@ViewBag.Message
-</div>
+<a asp-controller="Department" asp-action="Create" class="btn btn-primary">Create New Department</a>
 
 <br />
 @{

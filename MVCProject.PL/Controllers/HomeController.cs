@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using MVCProject.PL.ViewModels;
+using NToastNotify;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -13,10 +14,10 @@ namespace MVCProject.PL.Controllers
     {
         private readonly ILogger<HomeController> _logger;
 
-        public HomeController(ILogger<HomeController> logger)
+		public HomeController(ILogger<HomeController> logger)
         {
             _logger = logger;
-        }
+		}
 
         public IActionResult Index()
         {

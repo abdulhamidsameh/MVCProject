@@ -19,6 +19,7 @@ namespace MVCProject.PL.Controllers
         }
         public IActionResult Index()
         {
+            
             var departments = _departmentRepo.GetAll();
             return View(departments);
         }
@@ -34,13 +35,13 @@ namespace MVCProject.PL.Controllers
             {
                 var Count = _departmentRepo.Add(department);
                 if (Count > 0)
-                {
-                    //ViewBag.Message = "Department Is Created Successfully";
-					return RedirectToAction(nameof(Index));
-				}
-                    
-            }
-            return View(department);
+					TempData["AddSuccess"] = "Department Is Created Successfuly";
+				else
+					TempData["AddFail"] = "An Error Has Occured, Department Not Created :(";
+				return RedirectToAction(nameof(Index));
+
+			}
+			return View(department);
         }
         // /Department/Details/id
         //[HttpGet]

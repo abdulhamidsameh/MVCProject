@@ -4,6 +4,7 @@ using Microsoft.Extensions.Hosting;
 using MVCProject.BLL.Interfaces;
 using MVCProject.BLL.Repositories;
 using MVCProject.DAL.Models;
+using NToastNotify;
 using System;
 
 namespace MVCProject.PL.Controllers
@@ -36,9 +37,9 @@ namespace MVCProject.PL.Controllers
 			{
 				var Count = _employeeRepo.Add(employee);
 				if (Count > 0)
-					TempData["Succes"] = "Employee Is Created Successfuly";
+					TempData["AddSuccess"] = "Employee Is Created Successfuly";
 				else
-					TempData["Fail"] = "An Error Has Occured, Employee Not Created :(";
+					TempData["AddFail"] = "An Error Has Occured, Employee Not Created :(";
 				return RedirectToAction(nameof(Index));
 			}
 			return View(employee);

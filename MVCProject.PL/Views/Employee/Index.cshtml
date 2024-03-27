@@ -2,18 +2,16 @@
 @{
 	ViewData["Title"] = "Employees";
 }
-
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastr@2.1.4/dist/toastr.min.css">
+<script src="https://cdn.jsdelivr.net/npm/toastr@2.1.4/dist/toastr.min.js"></script>
 <h1>All Employees</h1>
 <br />
 <br />
-@if (@TempData["Fail"] is not null)
-{
-	<div class="alert alert-danger">@TempData["Fail"]</div>
-}
-@if (@TempData["Succes"] is not null)
-{
-	<div class="alert alert-success">@TempData["Succes"]</div>
-}
+
+
+<partial name="_CreatPartial"></partial>
+
+
 <br />
 <a asp-action="Create" class="btn btn-primary">Create New Employee</a>
 
