@@ -16,6 +16,7 @@ namespace MVCProject.DAL.Data.Configrations
             builder.Property(D => D.Name).HasColumnType("varchar").HasMaxLength(50).IsRequired();
             builder.Property(D => D.Code).HasColumnType("varchar").HasMaxLength(50).IsRequired();
             builder.Property(D => D.Id).UseIdentityColumn(10,10);
+            
         }
     }
 }
