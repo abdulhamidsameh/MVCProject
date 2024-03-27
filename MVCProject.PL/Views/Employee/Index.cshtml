@@ -6,7 +6,15 @@
 <h1>All Employees</h1>
 <br />
 <br />
-
+@if (@TempData["Fail"] is not null)
+{
+	<div class="alert alert-danger">@TempData["Fail"]</div>
+}
+@if (@TempData["Succes"] is not null)
+{
+	<div class="alert alert-success">@TempData["Succes"]</div>
+}
+<br />
 <a asp-action="Create" class="btn btn-primary">Create New Employee</a>
 
 <br />
