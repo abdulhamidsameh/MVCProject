@@ -1,12 +1,15 @@
-﻿using Microsoft.AspNetCore.Hosting;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Hosting;
 using MVCProject.BLL.Interfaces;
 using MVCProject.BLL.Repositories;
 using MVCProject.DAL.Models;
+using MVCProject.PL.ViewModels;
 using NToastNotify;
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace MVCProject.PL.Controllers
@@ -15,45 +18,44 @@ namespace MVCProject.PL.Controllers
 	{
 		private readonly IEmployeeRepository _employeeRepo;
 		private readonly IWebHostEnvironment _env;
+		private readonly IMapper _mapper;
 
-        public EmployeeController(IEmployeeRepository employeeRepo, IWebHostEnvironment env )
+		public EmployeeController(IEmployeeRepository employeeRepo, IWebHostEnvironment env ,IMapper mapper)
 		{
 			_employeeRepo = employeeRepo;
 			_env = env;
-        }
+			_mapper = mapper;
+		}
 		//[HttpGet]
 		public IActionResult Index(string searchInput)
 		{
 			var employees = Enumerable.Empty<Employee>();
 			if (string.IsNullOrEmpty(searchInput))
-			{
 				employees = _employeeRepo.GetAll();
-				return View(employees);
-			}
 			else
-			{
 				employees = _employeeRepo.SearchByName(searchInput);
-				return View(employees);
-			}
-		}
+			var mappedEmps = _mapper.Map<IEnumerable<Employee>, IEnumerable<EmployeeViewModel>>(employees);
+			return View(mappedEmps);
+		} 
 		[HttpGet]
 		public IActionResult Create()
 		{
             return View();
 		}
 		[HttpPost]
-		public IActionResult Create(Employee employee)
+		public IActionResult Create(EmployeeViewModel employeeVM)
 		{
+			var mappedEmp = _mapper.Map<EmployeeViewModel,Employee>(employeeVM);
 			if (ModelState.IsValid)
 			{
-				var Count = _employeeRepo.Add(employee);
+				var Count = _employeeRepo.Add(mappedEmp);
 				if (Count > 0)
 					TempData["AddSuccess"] = "Employee Is Created Successfuly";
 				else
 					TempData["AddFail"] = "An Error Has Occured, Employee Not Created :(";
 				return RedirectToAction(nameof(Index));
 			}
-			return View(employee);
+			return View(employeeVM);
 		}
 		[HttpGet]
 		public IActionResult Details(int? id, string ViewName = "Details")
@@ -63,7 +65,8 @@ namespace MVCProject.PL.Controllers
 			var employee = _employeeRepo.Get(id.Value);
 			if (employee is null)
 				return NotFound();
-			return View(ViewName, employee);
+			var mappedEmp = _mapper.Map<Employee, EmployeeViewModel>(employee);
+			return View(ViewName, mappedEmp);
 		}
 		[HttpGet]
 		public IActionResult Edit(int? id)
@@ -72,15 +75,16 @@ namespace MVCProject.PL.Controllers
 		}
 		[HttpPost]
 		[ValidateAntiForgeryToken]
-		public IActionResult Edit([FromRoute] int id, Employee employee)
+		public IActionResult Edit([FromRoute] int id, EmployeeViewModel employeeVM)
 		{
-			if (id != employee.Id)
+			if (id != employeeVM.Id)
 				return BadRequest();
 			if (!ModelState.IsValid)
-				return View(employee);
+				return View(employeeVM);
 			try
 			{
-				_employeeRepo.Update(employee);
+				var mappedEmplyee = _mapper.Map<EmployeeViewModel,Employee>(employeeVM);
+				_employeeRepo.Update(mappedEmplyee);
 				return RedirectToAction(nameof(Index));
 			}
 			catch (Exception ex)
@@ -89,7 +93,7 @@ namespace MVCProject.PL.Controllers
 					ModelState.AddModelError(string.Empty, ex.Message);
 				else
 					ModelState.AddModelError(string.Empty, "An Error Has Occured during Updating the Employee");
-				return View(employee);
+				return View(employeeVM);
 			}
 		}
 		[HttpGet]
@@ -99,11 +103,12 @@ namespace MVCProject.PL.Controllers
 		}
 		[HttpPost]
 		[ValidateAntiForgeryToken]
-		public IActionResult Delete(Employee employee)
+		public IActionResult Delete(EmployeeViewModel employeeVM)
 		{
 			try
 			{
-				_employeeRepo.Delete(employee);
+				var mappedEmp = _mapper.Map<EmployeeViewModel, Employee>(employeeVM);
+				_employeeRepo.Delete(mappedEmp);
 				return RedirectToAction(nameof(Index));
 			}
 			catch (Exception ex)
@@ -112,7 +117,7 @@ namespace MVCProject.PL.Controllers
 					ModelState.AddModelError(string.Empty, ex.Message);
 				else
 					ModelState.AddModelError(string.Empty, "An Error Has Occured during Deleting the Employee");
-				return View(employee);
+				return View(employeeVM);
 			}
 		}
 	}
