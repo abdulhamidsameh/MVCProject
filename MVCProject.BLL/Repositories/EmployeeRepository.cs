@@ -24,6 +24,10 @@ namespace MVCProject.BLL.Repositories
 		{
 			return _dbContext.Set<Employee>().AsNoTracking().Include(E => E.Department).ToList();
 		}
+        public IQueryable<Employee> SearchByName(string searchInput)
+        {
+			return _dbContext.Employees.Where(E => E.Name.Contains(searchInput)).AsNoTracking().Include(E => E.Department);
+		}
 	}
 }
   

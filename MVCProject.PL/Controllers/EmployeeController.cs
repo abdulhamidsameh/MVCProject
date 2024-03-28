@@ -6,6 +6,8 @@ using MVCProject.BLL.Repositories;
 using MVCProject.DAL.Models;
 using NToastNotify;
 using System;
+using System.Collections;
+using System.Linq;
 
 namespace MVCProject.PL.Controllers
 {
@@ -19,11 +21,20 @@ namespace MVCProject.PL.Controllers
 			_employeeRepo = employeeRepo;
 			_env = env;
         }
-		[HttpGet]
-		public IActionResult Index()
+		//[HttpGet]
+		public IActionResult Index(string searchInput)
 		{
-			var employees = _employeeRepo.GetAll();
-			return View(employees);
+			var employees = Enumerable.Empty<Employee>();
+			if (string.IsNullOrEmpty(searchInput))
+			{
+				employees = _employeeRepo.GetAll();
+				return View(employees);
+			}
+			else
+			{
+				employees = _employeeRepo.SearchByName(searchInput);
+				return View(employees);
+			}
 		}
 		[HttpGet]
 		public IActionResult Create()
