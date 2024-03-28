@@ -14,11 +14,11 @@ namespace MVCProject.PL.Controllers
 		private readonly IEmployeeRepository _employeeRepo;
 		private readonly IWebHostEnvironment _env;
 
-		public EmployeeController(IEmployeeRepository employeeRepo, IWebHostEnvironment env)
+        public EmployeeController(IEmployeeRepository employeeRepo, IWebHostEnvironment env )
 		{
 			_employeeRepo = employeeRepo;
 			_env = env;
-		}
+        }
 		[HttpGet]
 		public IActionResult Index()
 		{
@@ -28,7 +28,7 @@ namespace MVCProject.PL.Controllers
 		[HttpGet]
 		public IActionResult Create()
 		{
-			return View();
+            return View();
 		}
 		[HttpPost]
 		public IActionResult Create(Employee employee)

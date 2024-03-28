@@ -20,6 +20,10 @@ namespace MVCProject.BLL.Repositories
         {
             return _dbContext.Employees.Where(E => E.Address.ToLower() == address.ToLower()).AsNoTracking();
         }
-    }
+		public new IEnumerable<Employee> GetAll()
+		{
+			return _dbContext.Set<Employee>().AsNoTracking().Include(E => E.Department).ToList();
+		}
+	}
 }
   
