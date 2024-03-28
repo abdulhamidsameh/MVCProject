@@ -25,6 +25,10 @@ namespace MVCProject.DAL.Data.Configrations
                 (EmpType) => EmpType.ToString(),
                 (EmpTypeStr) => (EmpType)Enum.Parse(typeof(EmpType), EmpTypeStr)
                 );
+            builder.HasOne(E => E.Department)
+                .WithMany(D => D.Employees)
+                .HasForeignKey(E => E.DepartmentId)
+                .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

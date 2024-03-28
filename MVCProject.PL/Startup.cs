@@ -8,6 +8,9 @@ using Microsoft.Extensions.Hosting;
 using MVCProject.BLL.Interfaces;
 using MVCProject.BLL.Repositories;
 using MVCProject.DAL.Data;
+using MVCProject.PL.Extensions;
+using MVCProject.PL.Helpers;
+using NToastNotify;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -27,13 +30,13 @@ namespace MVCProject.PL
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllersWithViews();
-            services.AddDbContext<MVCProjectDbContext>(options =>
+            services.AddMvc();
+			services.AddDbContext<MVCProjectDbContext>(options =>
             {
-                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"));
+                options.UseLazyLoadingProxies().UseSqlServer(Configuration.GetConnectionString("DefaultConnection"));
             });
-            services.AddScoped<IDepartmentRepository,DepartmentRepository>();
-            services.AddScoped<IEmployeeRepository,EmployeeRepository>();
+            services.AddApplicationServices();
+            services.AddAutoMapper(M => M.AddProfile(new MappingProfiles()));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

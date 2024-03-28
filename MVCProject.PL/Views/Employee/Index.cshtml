@@ -1,16 +1,29 @@
-﻿@model IEnumerable<Employee>
+﻿@model IEnumerable<EmployeeViewModel>
 @{
-    ViewData["Title"] = "Employees";
+	ViewData["Title"] = "Employees";
 }
-
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastr@2.1.4/dist/toastr.min.css">
+<script src="https://cdn.jsdelivr.net/npm/toastr@2.1.4/dist/toastr.min.js"></script>
 <h1>All Employees</h1>
 <br />
 <br />
-<a  asp-action="Create" class="btn btn-primary">Create New Employee</a>
+
+<partial name="_CreatPartial"></partial>
 
 <br />
+<a asp-action="Create" class="btn btn-primary">Create New Employee</a>
 
-
+<br />
+<div class="row justify-content-center align-items-center mt-5">
+	<form class="col-8 offset-2" asp-action="Index">
+		<div class="col-8">
+			<input type="text" class="form-control" name="searchInput" placeholder="Search By Name"/>
+		</div>
+		<div class="col-4">
+			<input type="submit" value="Search" class="btn btn-success"/>
+		</div>
+	</form>
+</div>
 @{
 	if (Model.Count() > 0)
 	{
@@ -23,6 +36,7 @@
 					<th>@Html.DisplayNameFor(D => D.IsActive)</th>
 					<th>@Html.DisplayNameFor(D => D.Gender)</th>
 					<th>@Html.DisplayNameFor(D => D.Email)</th>
+					<th>@Html.DisplayNameFor(D => D.Department)</th>
 					<th>Details</th>
 					<th>Update</th>
 					<th>Delete</th>
@@ -40,23 +54,8 @@
 							<td>@Html.DisplayFor(M => employee.IsActive)</td>
 							<td>@Html.DisplayFor(M => employee.Gender)</td>
 							<td>@Html.DisplayFor(M => employee.Email)</td>
-							<td>
-								<a  asp-action="Details" asp-route-id="@employee.Id" class="btn btn-warning">
-									<i class="fas fa-eye"></i> Details
-								</a>
-
-							</td>
-							<td>
-								<a  asp-action="Edit" asp-route-id="@employee.Id" class="btn btn-success">
-									<i class="fas fa-edit"></i> Update
-								</a>
-
-							</td>
-							<td>
-								<a  asp-action="Delete" asp-route-id="@employee.Id" class="btn btn-danger">
-									<i class="fas fa-trash"></i> Delete
-								</a>
-							</td>
+							<td>@employee.Department?.Name</td>
+							<partial name="_ButtonsPartial" model="@employee.Id"></partial>
 						</tr>
 					}
 				}

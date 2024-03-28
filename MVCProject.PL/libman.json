@@ -1,0 +1,22 @@
+{
+  "version": "1.0",
+  "defaultProvider": "cdnjs",
+  "libraries": [
+    {
+      "library": "fontawesome-iconpicker@3.2.0",
+      "destination": "wwwroot/fontawesome-iconpicker/"
+    },
+    {
+      "library": "font-awesome@6.5.1",
+      "destination": "wwwroot/font-awesome/"
+    },
+    {
+      "library": "toastr.js@2.1.4",
+      "destination": "wwwroot/toastr.js/"
+    },
+    {
+      "library": "angular-animate@1.8.3",
+      "destination": "wwwroot/angular-animate/"
+    }
+  ]
+}
