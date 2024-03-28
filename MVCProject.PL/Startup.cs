@@ -8,6 +8,7 @@ using Microsoft.Extensions.Hosting;
 using MVCProject.BLL.Interfaces;
 using MVCProject.BLL.Repositories;
 using MVCProject.DAL.Data;
+using MVCProject.PL.Extensions;
 using NToastNotify;
 using System;
 using System.Collections.Generic;
@@ -33,9 +34,7 @@ namespace MVCProject.PL
             {
                 options.UseLazyLoadingProxies().UseSqlServer(Configuration.GetConnectionString("DefaultConnection"));
             });
-            services.AddScoped<IDepartmentRepository,DepartmentRepository>();
-            services.AddScoped<IEmployeeRepository,EmployeeRepository>();
-     
+            services.AddApplicationServices();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
