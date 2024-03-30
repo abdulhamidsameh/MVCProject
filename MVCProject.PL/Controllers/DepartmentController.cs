@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Routing;
 using Microsoft.Extensions.Hosting;
 using MVCProject.BLL.Interfaces;
+using MVCProject.BLL.Repositories;
 using MVCProject.DAL.Models;
 using MVCProject.PL.ViewModels;
 using System;
@@ -12,19 +13,19 @@ namespace MVCProject.PL.Controllers
 {
     public class DepartmentController : Controller
     {
-        private readonly IDepartmentRepository _departmentRepo;
-        private readonly IWebHostEnvironment _env;
+		private readonly IUnitOfWork _unitOfWork;
+		private readonly IWebHostEnvironment _env;
 		private readonly IMapper _mapper;
 
-		public DepartmentController(IDepartmentRepository departmentRepo, IWebHostEnvironment env, IMapper mapper)
+		public DepartmentController(IUnitOfWork unitOfWork, IWebHostEnvironment env, IMapper mapper)
         {
-            _departmentRepo = departmentRepo;
-            _env = env;
+			_unitOfWork = unitOfWork;
+			_env = env;
 			_mapper = mapper;
 		}
         public IActionResult Index()
         {
-            var departments = _departmentRepo.GetAll();
+            var departments = _unitOfWork.Repository<Department>().GetAll();
 			var mappedDepartment = _mapper.Map<IEnumerable<Department>, IEnumerable<DepartmentViewModel>>(departments);
             return View(mappedDepartment);
         }
@@ -39,8 +40,10 @@ namespace MVCProject.PL.Controllers
             var mappedDepartment = _mapper.Map<DepartmentViewModel,Department>(departmentMV);
             if (ModelState.IsValid)
             {
-                var Count = _departmentRepo.Add(mappedDepartment);
-                if (Count > 0)
+                
+                _unitOfWork.Repository<Department>().Add(mappedDepartment);
+                var Count = _unitOfWork.Complete();
+				if (Count > 0)
 					TempData["AddSuccess"] = "Department Is Created Successfuly";
 				else
 					TempData["AddFail"] = "An Error Has Occured, Department Not Created :(";
@@ -54,7 +57,7 @@ namespace MVCProject.PL.Controllers
         {
             if (!id.HasValue)
                 return BadRequest();
-            var department = _departmentRepo.Get(id.Value);
+            var department = _unitOfWork.Repository<Department>().Get(id.Value);
             if (department is null)
                 return NotFound();
             var mappedDepartment = _mapper.Map<Department,DepartmentViewModel>(department);
@@ -77,7 +80,8 @@ namespace MVCProject.PL.Controllers
             try
             {
 				var mappedDepartment = _mapper.Map<DepartmentViewModel, Department>(departmentVM);
-				_departmentRepo.Update(mappedDepartment);
+				_unitOfWork.Repository<Department>().Update(mappedDepartment);
+                _unitOfWork.Complete();
                 return RedirectToAction(nameof(Index));
             }
             catch (Exception ex)
@@ -101,7 +105,8 @@ namespace MVCProject.PL.Controllers
             try
             {
 				var mappedDepartment = _mapper.Map<DepartmentViewModel, Department>(departmentVM);
-				_departmentRepo.Delete(mappedDepartment);
+				_unitOfWork.Repository<Department>().Delete(mappedDepartment);
+                _unitOfWork.Complete();
                 return RedirectToAction(nameof(Index));
             }
             catch (Exception ex)
