@@ -3,7 +3,9 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using MVCProject.BLL.Interfaces;
 using MVCProject.BLL.Repositories;
 using MVCProject.DAL.Data;
+using MVCProject.DAL.Models;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -14,16 +16,31 @@ namespace MVCProject.BLL
     public class UnitOfWork : IUnitOfWork
 	{
 		private readonly MVCProjectDbContext _dbContext;
-
+		private Hashtable _repositories;
 		public UnitOfWork(MVCProjectDbContext dbContext)
 		{
-			EmployeeRepository = new EmployeeRepository(dbContext);
-			DepartmentRepository = new DepartmentRepository(dbContext);
 			_dbContext = dbContext;
+			_repositories = new Hashtable();
 		}
-		public IEmployeeRepository EmployeeRepository { get; set; }
-		public IDepartmentRepository DepartmentRepository { get; set; }
-		public int Complete()
+        public IGenericRepository<T> Repository<T>() where T : ModelBase
+        {
+			var key = typeof(T).Name;
+			if (!_repositories.ContainsKey(key))
+			{
+				if(key == nameof(Employee))
+				{
+                    var repository = new EmployeeRepository(_dbContext);
+                    _repositories.Add(key, repository);
+                }
+				else
+				{
+                    var repository = new GenericRepository<T>(_dbContext);
+                    _repositories.Add(key, repository);
+                }
+            }
+			return _repositories[key] as IGenericRepository<T>;
+        }
+        public int Complete()
 		{
 			return _dbContext.SaveChanges();
 		}
@@ -31,5 +48,5 @@ namespace MVCProject.BLL
 		{
 			_dbContext.Dispose();
 		}
-	}
+    }
 }

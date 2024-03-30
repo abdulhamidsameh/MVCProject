@@ -30,11 +30,13 @@ namespace MVCProject.PL.Controllers
 		//[HttpGet]
 		public IActionResult Index(string searchInput)
 		{
-			var employees = Enumerable.Empty<Employee>();
+			var EmpRepo = _unitOfWork.Repository<Employee>() as EmployeeRepository;
+
+            var employees = Enumerable.Empty<Employee>();
 			if (string.IsNullOrEmpty(searchInput))
-				employees = _unitOfWork.EmployeeRepository.GetAll();
+				employees = _unitOfWork.Repository<Employee>().GetAll();
 			else
-				employees = _unitOfWork.EmployeeRepository.SearchByName(searchInput);
+				employees = EmpRepo.SearchByName(searchInput);
 			var mappedEmps = _mapper.Map<IEnumerable<Employee>, IEnumerable<EmployeeViewModel>>(employees);
 			return View(mappedEmps);
 		} 
@@ -49,7 +51,7 @@ namespace MVCProject.PL.Controllers
 			var mappedEmp = _mapper.Map<EmployeeViewModel,Employee>(employeeVM);
 			if (ModelState.IsValid)
 			{
-				_unitOfWork.EmployeeRepository.Add(mappedEmp);
+				_unitOfWork.Repository<Employee>().Add(mappedEmp);
 				var Count = _unitOfWork.Complete();
 				if (Count > 0)
 					TempData["AddSuccess"] = "Employee Is Created Successfuly";
@@ -64,7 +66,7 @@ namespace MVCProject.PL.Controllers
 		{
 			if (!id.HasValue)
 				return BadRequest();
-			var employee = _unitOfWork.EmployeeRepository.Get(id.Value);
+			var employee = _unitOfWork.Repository<Employee>().Get(id.Value);
 			if (employee is null)
 				return NotFound();
 			var mappedEmp = _mapper.Map<Employee, EmployeeViewModel>(employee);
@@ -86,7 +88,7 @@ namespace MVCProject.PL.Controllers
 			try
 			{
 				var mappedEmplyee = _mapper.Map<EmployeeViewModel,Employee>(employeeVM);
-				_unitOfWork.EmployeeRepository.Update(mappedEmplyee);
+				_unitOfWork.Repository<Employee>().Update(mappedEmplyee);
 				_unitOfWork.Complete();
 				return RedirectToAction(nameof(Index));
 			}
@@ -111,7 +113,7 @@ namespace MVCProject.PL.Controllers
 			try
 			{
 				var mappedEmp = _mapper.Map<EmployeeViewModel, Employee>(employeeVM);
-				_unitOfWork.EmployeeRepository.Delete(mappedEmp);
+				_unitOfWork.Repository<Employee>().Delete(mappedEmp);
 				_unitOfWork.Complete();
 				return RedirectToAction(nameof(Index));
 			}

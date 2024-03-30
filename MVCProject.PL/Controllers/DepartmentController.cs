@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Routing;
 using Microsoft.Extensions.Hosting;
 using MVCProject.BLL.Interfaces;
+using MVCProject.BLL.Repositories;
 using MVCProject.DAL.Models;
 using MVCProject.PL.ViewModels;
 using System;
@@ -24,7 +25,7 @@ namespace MVCProject.PL.Controllers
 		}
         public IActionResult Index()
         {
-            var departments = _unitOfWork.DepartmentRepository.GetAll();
+            var departments = _unitOfWork.Repository<Department>().GetAll();
 			var mappedDepartment = _mapper.Map<IEnumerable<Department>, IEnumerable<DepartmentViewModel>>(departments);
             return View(mappedDepartment);
         }
@@ -40,7 +41,7 @@ namespace MVCProject.PL.Controllers
             if (ModelState.IsValid)
             {
                 
-                _unitOfWork.DepartmentRepository.Add(mappedDepartment);
+                _unitOfWork.Repository<Department>().Add(mappedDepartment);
                 var Count = _unitOfWork.Complete();
 				if (Count > 0)
 					TempData["AddSuccess"] = "Department Is Created Successfuly";
@@ -56,7 +57,7 @@ namespace MVCProject.PL.Controllers
         {
             if (!id.HasValue)
                 return BadRequest();
-            var department = _unitOfWork.DepartmentRepository.Get(id.Value);
+            var department = _unitOfWork.Repository<Department>().Get(id.Value);
             if (department is null)
                 return NotFound();
             var mappedDepartment = _mapper.Map<Department,DepartmentViewModel>(department);
@@ -79,7 +80,7 @@ namespace MVCProject.PL.Controllers
             try
             {
 				var mappedDepartment = _mapper.Map<DepartmentViewModel, Department>(departmentVM);
-				_unitOfWork.DepartmentRepository.Update(mappedDepartment);
+				_unitOfWork.Repository<Department>().Update(mappedDepartment);
                 _unitOfWork.Complete();
                 return RedirectToAction(nameof(Index));
             }
@@ -104,7 +105,7 @@ namespace MVCProject.PL.Controllers
             try
             {
 				var mappedDepartment = _mapper.Map<DepartmentViewModel, Department>(departmentVM);
-				_unitOfWork.DepartmentRepository.Delete(mappedDepartment);
+				_unitOfWork.Repository<Department>().Delete(mappedDepartment);
                 _unitOfWork.Complete();
                 return RedirectToAction(nameof(Index));
             }
