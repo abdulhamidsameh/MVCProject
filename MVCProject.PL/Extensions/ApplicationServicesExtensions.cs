@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using MVCProject.BLL;
 using MVCProject.BLL.Interfaces;
 using MVCProject.BLL.Repositories;
 
@@ -8,8 +9,7 @@ namespace MVCProject.PL.Extensions
 	{
 		public static void AddApplicationServices(this IServiceCollection services)
 		{
-			services.AddScoped<IDepartmentRepository, DepartmentRepository>();
-			services.AddScoped<IEmployeeRepository, EmployeeRepository>();
+			services.AddScoped<IUnitOfWork, UnitOfWork>();
 		}
 	}
 }

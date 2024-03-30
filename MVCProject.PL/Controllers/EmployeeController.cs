@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Hosting;
+using MVCProject.BLL;
 using MVCProject.BLL.Interfaces;
 using MVCProject.BLL.Repositories;
 using MVCProject.DAL.Models;
@@ -16,13 +17,13 @@ namespace MVCProject.PL.Controllers
 {
 	public class EmployeeController : Controller
 	{
-		private readonly IEmployeeRepository _employeeRepo;
+		private readonly IUnitOfWork _unitOfWork;
 		private readonly IWebHostEnvironment _env;
 		private readonly IMapper _mapper;
 
-		public EmployeeController(IEmployeeRepository employeeRepo, IWebHostEnvironment env ,IMapper mapper)
+		public EmployeeController(IUnitOfWork unitOfWork,IWebHostEnvironment env ,IMapper mapper)
 		{
-			_employeeRepo = employeeRepo;
+			_unitOfWork = unitOfWork;
 			_env = env;
 			_mapper = mapper;
 		}
@@ -31,9 +32,9 @@ namespace MVCProject.PL.Controllers
 		{
 			var employees = Enumerable.Empty<Employee>();
 			if (string.IsNullOrEmpty(searchInput))
-				employees = _employeeRepo.GetAll();
+				employees = _unitOfWork.EmployeeRepository.GetAll();
 			else
-				employees = _employeeRepo.SearchByName(searchInput);
+				employees = _unitOfWork.EmployeeRepository.SearchByName(searchInput);
 			var mappedEmps = _mapper.Map<IEnumerable<Employee>, IEnumerable<EmployeeViewModel>>(employees);
 			return View(mappedEmps);
 		} 
@@ -48,7 +49,8 @@ namespace MVCProject.PL.Controllers
 			var mappedEmp = _mapper.Map<EmployeeViewModel,Employee>(employeeVM);
 			if (ModelState.IsValid)
 			{
-				var Count = _employeeRepo.Add(mappedEmp);
+				_unitOfWork.EmployeeRepository.Add(mappedEmp);
+				var Count = _unitOfWork.Complete();
 				if (Count > 0)
 					TempData["AddSuccess"] = "Employee Is Created Successfuly";
 				else
@@ -62,7 +64,7 @@ namespace MVCProject.PL.Controllers
 		{
 			if (!id.HasValue)
 				return BadRequest();
-			var employee = _employeeRepo.Get(id.Value);
+			var employee = _unitOfWork.EmployeeRepository.Get(id.Value);
 			if (employee is null)
 				return NotFound();
 			var mappedEmp = _mapper.Map<Employee, EmployeeViewModel>(employee);
@@ -84,7 +86,8 @@ namespace MVCProject.PL.Controllers
 			try
 			{
 				var mappedEmplyee = _mapper.Map<EmployeeViewModel,Employee>(employeeVM);
-				_employeeRepo.Update(mappedEmplyee);
+				_unitOfWork.EmployeeRepository.Update(mappedEmplyee);
+				_unitOfWork.Complete();
 				return RedirectToAction(nameof(Index));
 			}
 			catch (Exception ex)
@@ -108,7 +111,8 @@ namespace MVCProject.PL.Controllers
 			try
 			{
 				var mappedEmp = _mapper.Map<EmployeeViewModel, Employee>(employeeVM);
-				_employeeRepo.Delete(mappedEmp);
+				_unitOfWork.EmployeeRepository.Delete(mappedEmp);
+				_unitOfWork.Complete();
 				return RedirectToAction(nameof(Index));
 			}
 			catch (Exception ex)
