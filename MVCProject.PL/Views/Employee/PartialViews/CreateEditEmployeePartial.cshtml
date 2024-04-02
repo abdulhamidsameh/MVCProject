@@ -1,7 +1,7 @@
 ﻿@model EmployeeViewModel
 @inject IUnitOfWork _unitofwork;
 @{
-    var Department = new SelectList(_unitofwork.Repository<Department>().GetAll(), "Id", "Name");
+    var Department = new SelectList(await _unitofwork.Repository<Department>().GetAllAsync(), "Id", "Name");
 }
 
 <div asp-validation-summary="ModelOnly"></div>
