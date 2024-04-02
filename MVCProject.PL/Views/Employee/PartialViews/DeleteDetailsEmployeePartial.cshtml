@@ -1,4 +1,12 @@
 ﻿@model EmployeeViewModel
+
+
+<div class="form-group">
+	<img class="rounded-circle  w-25" src="~/Files/Images/@Model.ImageName" alt="@Model.Name Image"/>
+</div>
+
+
+
 <div class="form-group">
 	<label class="col-form-label" asp-for="Name"></label>
 	<input asp-for="Name" class="form-control" readonly />
@@ -31,11 +39,25 @@
 
 <div class="form-group ">
 	<input asp-for="IsActive" class="form-check-input" readonly />
-	<label class="col-form-label" asp-for="IsActive"></label>
+	<label class="col-form-label" asp-for="IsActive" ></label>
 </div>
 
 <div class="form-group">
 	<label class="col-form-label" asp-for="HiringDate"></label>
 	<input asp-for="HiringDate" class="form-control" readonly />
+</div>
+
+<div class="form-group">
+	<video class="form-group" width="320" height="240" controls>
+		<source src="~/Files/Videos/@Model.VideoName" type="video/mp4">
+	</video>
+</div>
+
+<div class="form-group row justify-content-center align-items-center">
+	<iframe src="~/Files/Pdfs/@Model.PdfName"
+			frameBorder="0"
+			scrolling="auto"
+			class="w-50 min-vh-100"
+			></iframe>
 </div>
 
