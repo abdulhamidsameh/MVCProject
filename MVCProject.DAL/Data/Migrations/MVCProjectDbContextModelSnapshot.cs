@@ -80,6 +80,9 @@ namespace MVCProject.DAL.Data.Migrations
                     b.Property<DateTime>("HiringDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("ImageName")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
@@ -91,11 +94,17 @@ namespace MVCProject.DAL.Data.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("varchar(50)");
 
+                    b.Property<string>("PdfName")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("PhoneNumber")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<decimal>("Salary")
                         .HasColumnType("decimal(12,2)");
+
+                    b.Property<string>("VideoName")
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 

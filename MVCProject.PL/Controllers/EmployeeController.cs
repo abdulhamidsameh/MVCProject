@@ -1,11 +1,13 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.CodeAnalysis;
 using Microsoft.Extensions.Hosting;
 using MVCProject.BLL;
 using MVCProject.BLL.Interfaces;
 using MVCProject.BLL.Repositories;
 using MVCProject.DAL.Models;
+using MVCProject.PL.Helpers;
 using MVCProject.PL.ViewModels;
 using NToastNotify;
 using System;
@@ -48,10 +50,19 @@ namespace MVCProject.PL.Controllers
 		[HttpPost]
 		public IActionResult Create(EmployeeViewModel employeeVM)
 		{
-			var mappedEmp = _mapper.Map<EmployeeViewModel,Employee>(employeeVM);
 			if (ModelState.IsValid)
 			{
-				_unitOfWork.Repository<Employee>().Add(mappedEmp);
+                var ImageName = DocumentSettings.UploadFile(employeeVM.Image, "Images");
+                var VideoName = DocumentSettings.UploadFile(employeeVM.Video, "Videos");
+                var PdfName = DocumentSettings.UploadFile(employeeVM.Pdf, "Pdfs");
+				
+				employeeVM.ImageName = ImageName;
+				employeeVM.VideoName = VideoName;
+				employeeVM.PdfName = PdfName;
+
+                var mappedEmp = _mapper.Map<EmployeeViewModel, Employee>(employeeVM);
+
+                _unitOfWork.Repository<Employee>().Add(mappedEmp);
 				var Count = _unitOfWork.Complete();
 				if (Count > 0)
 					TempData["AddSuccess"] = "Employee Is Created Successfuly";
