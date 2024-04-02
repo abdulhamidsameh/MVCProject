@@ -23,7 +23,7 @@ namespace MVCProject.PL.Controllers
 		private readonly IWebHostEnvironment _env;
 		private readonly IMapper _mapper;
 
-		public EmployeeController(IUnitOfWork unitOfWork,IWebHostEnvironment env ,IMapper mapper)
+		public EmployeeController(IUnitOfWork unitOfWork, IWebHostEnvironment env, IMapper mapper)
 		{
 			_unitOfWork = unitOfWork;
 			_env = env;
@@ -34,40 +34,42 @@ namespace MVCProject.PL.Controllers
 		{
 			var EmpRepo = _unitOfWork.Repository<Employee>() as EmployeeRepository;
 
-            var employees = Enumerable.Empty<Employee>();
+			var employees = Enumerable.Empty<Employee>();
 			if (string.IsNullOrEmpty(searchInput))
 				employees = _unitOfWork.Repository<Employee>().GetAll();
 			else
 				employees = EmpRepo.SearchByName(searchInput);
 			var mappedEmps = _mapper.Map<IEnumerable<Employee>, IEnumerable<EmployeeViewModel>>(employees);
 			return View(mappedEmps);
-		} 
+		}
 		[HttpGet]
 		public IActionResult Create()
 		{
-            return View();
+			return View();
 		}
 		[HttpPost]
 		public IActionResult Create(EmployeeViewModel employeeVM)
 		{
 			if (ModelState.IsValid)
 			{
-                var ImageName = DocumentSettings.UploadFile(employeeVM.Image, "Images");
-                var VideoName = DocumentSettings.UploadFile(employeeVM.Video, "Videos");
-                var PdfName = DocumentSettings.UploadFile(employeeVM.Pdf, "Pdfs");
-				
+				var ImageName = DocumentSettings.UploadFile(employeeVM.Image, "Images");
+				var VideoName = DocumentSettings.UploadFile(employeeVM.Video, "Videos");
+				var PdfName = DocumentSettings.UploadFile(employeeVM.Pdf, "Pdfs");
+
 				employeeVM.ImageName = ImageName;
 				employeeVM.VideoName = VideoName;
 				employeeVM.PdfName = PdfName;
 
-                var mappedEmp = _mapper.Map<EmployeeViewModel, Employee>(employeeVM);
+				var mappedEmp = _mapper.Map<EmployeeViewModel, Employee>(employeeVM);
 
-                _unitOfWork.Repository<Employee>().Add(mappedEmp);
+				_unitOfWork.Repository<Employee>().Add(mappedEmp);
 				var Count = _unitOfWork.Complete();
 				if (Count > 0)
 					TempData["AddSuccess"] = "Employee Is Created Successfuly";
 				else
+				{
 					TempData["AddFail"] = "An Error Has Occured, Employee Not Created :(";
+				}
 				return RedirectToAction(nameof(Index));
 			}
 			return View(employeeVM);
@@ -81,6 +83,12 @@ namespace MVCProject.PL.Controllers
 			if (employee is null)
 				return NotFound();
 			var mappedEmp = _mapper.Map<Employee, EmployeeViewModel>(employee);
+			if(ViewName.Equals("Delete",StringComparison.OrdinalIgnoreCase))
+			{
+				TempData["ImageName"] = employee.ImageName;
+				TempData["VideoName"] = employee.VideoName;
+				TempData["PdfName"] = employee.PdfName;
+			}
 			return View(ViewName, mappedEmp);
 		}
 		[HttpGet]
@@ -98,7 +106,7 @@ namespace MVCProject.PL.Controllers
 				return View(employeeVM);
 			try
 			{
-				var mappedEmplyee = _mapper.Map<EmployeeViewModel,Employee>(employeeVM);
+				var mappedEmplyee = _mapper.Map<EmployeeViewModel, Employee>(employeeVM);
 				_unitOfWork.Repository<Employee>().Update(mappedEmplyee);
 				_unitOfWork.Complete();
 				return RedirectToAction(nameof(Index));
@@ -123,9 +131,15 @@ namespace MVCProject.PL.Controllers
 		{
 			try
 			{
+				employeeVM.ImageName = TempData["ImageName"] as string;
+				employeeVM.VideoName = TempData["VideoName"] as string;
+				employeeVM.PdfName = TempData["PdfName"]  as string;
 				var mappedEmp = _mapper.Map<EmployeeViewModel, Employee>(employeeVM);
 				_unitOfWork.Repository<Employee>().Delete(mappedEmp);
 				_unitOfWork.Complete();
+				DocumentSettings.DeleteFile(employeeVM.ImageName, "Images");
+				DocumentSettings.DeleteFile(employeeVM.VideoName, "Videos");
+				DocumentSettings.DeleteFile(employeeVM.PdfName, "Pdfs");
 				return RedirectToAction(nameof(Index));
 			}
 			catch (Exception ex)
