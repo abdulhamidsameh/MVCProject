@@ -51,5 +51,8 @@ namespace MVCProject.DAL.Models
         public int? DepartmentId { get; set; }
         
         public virtual Department Department { get; set; }
+        public string ImageName { get; set; }
+        public string VideoName { get; set; }
+        public string PdfName { get; set; }
     }
 }

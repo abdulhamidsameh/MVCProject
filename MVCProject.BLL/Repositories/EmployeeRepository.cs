@@ -16,14 +16,17 @@ namespace MVCProject.BLL.Repositories
         {
             
         }
+
         public IQueryable<Employee> GetEmployeesByAddress(string address)
         {
             return _dbContext.Employees.Where(E => E.Address.ToLower() == address.ToLower()).AsNoTracking();
         }
-		public new IEnumerable<Employee> GetAll()
+
+		public new async Task<IEnumerable<Employee>> GetAllAsync()
 		{
-			return _dbContext.Set<Employee>().AsNoTracking().Include(E => E.Department).ToList();
+			return await _dbContext.Set<Employee>().AsNoTracking().Include(E => E.Department).ToListAsync();
 		}
+
         public IQueryable<Employee> SearchByName(string searchInput)
         {
 			return _dbContext.Employees.Where(E => E.Name.Contains(searchInput)).AsNoTracking().Include(E => E.Department);

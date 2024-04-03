@@ -1,6 +1,7 @@
 ﻿using MVCProject.DAL.Models;
 using System.ComponentModel.DataAnnotations;
 using System;
+using Microsoft.AspNetCore.Http;
 
 namespace MVCProject.PL.ViewModels
 {
@@ -45,5 +46,12 @@ namespace MVCProject.PL.ViewModels
 		
 		public virtual Department Department { get; set; }
 
-	}
+        public IFormFile Image { get; set; }
+        public string ImageName { get; set; }
+        public IFormFile Video { get; set; }
+		public string VideoName { get; set; }
+        public IFormFile Pdf { get; set; }
+		public string PdfName { get; set; }
+
+    }
 }
