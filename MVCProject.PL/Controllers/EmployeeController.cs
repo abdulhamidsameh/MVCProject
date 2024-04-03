@@ -138,20 +138,20 @@ namespace MVCProject.PL.Controllers
 		[ValidateAntiForgeryToken]
 		public async Task<IActionResult> Delete(EmployeeViewModel employeeVM)
 		{
+			employeeVM.ImageName = TempData["ImageName"] as string;
+			employeeVM.VideoName = TempData["VideoName"] as string;
+			employeeVM.PdfName = TempData["PdfName"] as string;
 			try
 			{
-				employeeVM.ImageName = TempData["ImageName"] as string;
-				employeeVM.VideoName = TempData["VideoName"] as string;
-				employeeVM.PdfName = TempData["PdfName"]  as string;
 				var mappedEmp = _mapper.Map<EmployeeViewModel, Employee>(employeeVM);
 				_unitOfWork.Repository<Employee>().Delete(mappedEmp);
 				var Count = await _unitOfWork.Complete();
 				if(Count > 0)
 				{
-					DocumentSettings.DeleteFile(employeeVM.ImageName, "Images");
-					DocumentSettings.DeleteFile(employeeVM.VideoName, "Videos");
-					DocumentSettings.DeleteFile(employeeVM.PdfName, "Pdfs");
 					return RedirectToAction(nameof(Index));
+					//DocumentSettings.DeleteFile(employeeVM.ImageName, "Images");
+					//DocumentSettings.DeleteFile(employeeVM.VideoName, "Videos");
+					//DocumentSettings.DeleteFile(employeeVM.PdfName, "Pdfs");
 				}
 				return View(employeeVM);
 
