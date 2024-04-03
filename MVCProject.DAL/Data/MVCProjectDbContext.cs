@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace MVCProject.DAL.Data
 {
-	public class MVCProjectDbContext : IdentityDbContext
+	public class MVCProjectDbContext : IdentityDbContext<ApplicationUser>
 	{
 		public MVCProjectDbContext(DbContextOptions<MVCProjectDbContext> options) : base(options)
 		{
